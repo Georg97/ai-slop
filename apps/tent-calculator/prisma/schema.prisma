@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+model TentCalculation {
+    id                String   @id @default(cuid())
+    name              String
+    
+    // Target parameters
+    targetFloorWidth  Float?
+    targetFootHeight  Float?
+    targetHeadHeight  Float?
+    
+    // Padding parameters
+    verticalPadding   Float   // top clearance from inner peak to tarp
+    horizontalPadding Float   // side clearance from inner edges to tarp
+    endPadding        Float   // foot/head clearance
+    
+    // Calculated results
+    actualFootHeight  Float?
+    actualHeadHeight  Float?
+    actualFloorWidth  Float?
+    
+    // Metadata
+    calculationMode   String  // "solve_height", "solve_width", "solve_padding"
+    isValid           Boolean @default(true)
+    warnings          String? // JSON string for geometric constraint warnings
+    
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+
+    @@index([name])
+    @@index([createdAt])
+}
+
+model PaddingProfile {
+    id                String   @id @default(cuid())
+    name              String   @unique
+    description       String
+    verticalPadding   Float
+    horizontalPadding Float
+    endPadding        Float
+    isDefault         Boolean  @default(false)
+    
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+
+    @@index([name])
+}
