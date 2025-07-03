@@ -55,7 +55,7 @@ async function createApp(): Promise<void> {
     console.log('📦 Initializing T3 stack...');
     process.chdir(appDir);
     
-    execSync(`pnpm create t3-app@latest . --nextAuth --prisma --tailwind --trpc --typescript --yes`, {
+    execSync(`pnpm create t3-app@latest . --CI --nextAuth --prisma --tailwind --trpc --default`, {
       stdio: 'inherit'
     });
 
@@ -82,7 +82,7 @@ async function createApp(): Promise<void> {
     execSync(`pnpm dlx shadcn-ui@latest init --yes`, { stdio: 'inherit' });
 
     // Get app details from user
-    console.log('\n📝 Let\\'s configure your app...');
+    console.log('\n📝 Let\'s configure your app...');
     
     const appDescription = await question('Enter app description: ');
     const appPurpose = await question('What is the main purpose of this app? ');
@@ -159,17 +159,17 @@ async function createApp(): Promise<void> {
 
     fs.writeFileSync(appsConfigPath, JSON.stringify(appsConfig, null, 2));
 
-    console.log(`\\n✅ App '${appName}' created successfully!`);
-    console.log(`\\n📋 Next steps:`);
+    console.log(`\n✅ App '${appName}' created successfully!`);
+    console.log(`\n📋 Next steps:`);
     console.log(`   1. cd apps/${appName}`);
     console.log(`   2. pnpm install`);
     console.log(`   3. pnpm dev`);
     console.log(`   4. Open http://localhost:3000`);
     console.log(`   5. Edit CLAUDE.md to add more details`);
-    console.log(`\\n📄 Don't forget to read the CLAUDE.md file in your app directory!`);
+    console.log(`\n📄 Don't forget to read the CLAUDE.md file in your app directory!`);
 
   } catch (error) {
-    console.error('❌ Error creating app:', error.message);
+    console.error('❌ Error creating app:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   } finally {
     rl.close();
