@@ -1,0 +1,32 @@
+{
+  "name": "ai-slop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo for AI-generated mini utilities and applications",
+  "scripts": {
+    "build": "pnpm run -r build",
+    "dev": "pnpm run -r dev",
+    "lint": "pnpm run -r lint",
+    "type-check": "pnpm run -r type-check",
+    "clean": "pnpm run -r clean && rm -rf node_modules",
+    "test": "pnpm run -r test",
+    "create-app": "tsx scripts/create-app.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "t3-stack",
+    "nextjs",
+    "typescript",
+    "monorepo",
+    "pnpm",
+    "utilities"
+  ],
+  "author": "Georg97",
+  "license": "MIT"
+}

@@ -1,0 +1,229 @@
+# {{APP_NAME}} - {{APP_DESCRIPTION}}
+
+## App Overview
+
+**Purpose:** {{APP_PURPOSE}}
+**Status:** {{APP_STATUS}} (Development/Testing/Production)
+**Port:** {{APP_PORT}} (development)
+**Deployment:** {{DEPLOYMENT_URL}}
+
+## Technical Stack
+
+- **Language:** TypeScript (strict mode) - NO JavaScript files allowed
+- **Framework:** T3 Stack (Next.js 14, TypeScript, Tailwind CSS, tRPC, Prisma)
+- **State Management:** Zustand (for client-side state)
+- **Data Fetching:** TanStack Query (React Query) for client-side queries
+- **UI Components:** shadcn/ui (with Tailwind CSS)
+- **Tables:** TanStack Table (for data tables)
+- **Form Validation:** Zod (for schema validation) + React Hook Form
+- **Database:** {{DATABASE_TYPE}} (SQLite/PostgreSQL)
+- **Authentication:** {{AUTH_TYPE}} (NextAuth.js/Custom/None)
+- **External APIs:** {{EXTERNAL_APIS}}
+- **Special Dependencies:** {{SPECIAL_DEPS}}
+
+## TypeScript Requirements
+
+**CRITICAL:** This entire app must be TypeScript only:
+- All `.js` files must be `.ts` or `.tsx`
+- Use strict TypeScript configuration
+- All functions must have proper type annotations
+- No `any` types unless absolutely necessary
+- All props, state, and API responses must be properly typed
+- Configuration files should be TypeScript where possible
+
+## Required Tech Stack Usage
+
+**MANDATORY:** Use only these technologies:
+- **State Management:** Zustand stores only (no Redux, Context, etc.)
+- **Data Fetching:** TanStack Query only (no SWR, native fetch, etc.)
+- **UI Components:** shadcn/ui only (no other component libraries)
+- **Tables:** TanStack Table only (no other table libraries)
+- **Form Validation:** Zod + React Hook Form only (no Formik, Yup, etc.)
+- **API Layer:** tRPC only (no REST endpoints unless absolutely necessary)
+- **Styling:** Tailwind CSS only (no styled-components, emotion, etc.)
+
+## Database Schema
+
+{{DATABASE_SCHEMA}}
+
+```prisma
+// Add your Prisma schema here
+model Example {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+## API Endpoints (tRPC)
+
+### Queries
+- `{{QUERY_ENDPOINTS}}`
+
+### Mutations  
+- `{{MUTATION_ENDPOINTS}}`
+
+## UI Components
+
+### Pages
+- `{{PAGES_LIST}}`
+
+### Components
+- `{{COMPONENTS_LIST}}`
+
+## Development Setup
+
+### Prerequisites
+```bash
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env.local
+```
+
+### Environment Variables
+```env
+# Database
+DATABASE_URL="{{DATABASE_URL}}"
+
+# Authentication (if needed)
+NEXTAUTH_SECRET="{{NEXTAUTH_SECRET}}"
+NEXTAUTH_URL="{{NEXTAUTH_URL}}"
+
+# External APIs
+{{EXTERNAL_API_KEYS}}
+```
+
+### Database Setup
+```bash
+# Generate Prisma client
+pnpm prisma generate
+
+# Run migrations
+pnpm prisma migrate dev
+
+# Seed database (if applicable)
+pnpm prisma db seed
+```
+
+### Development Commands
+```bash
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Run tests
+pnpm test
+
+# Database operations
+pnpm prisma studio
+pnpm prisma migrate dev
+```
+
+## Features
+
+### Core Features
+- {{CORE_FEATURES}}
+
+### Planned Features
+- {{PLANNED_FEATURES}}
+
+## Development Notes
+
+### Current Implementation Status
+- {{IMPLEMENTATION_STATUS}}
+
+### Known Issues
+- {{KNOWN_ISSUES}}
+
+### Technical Decisions
+- {{TECHNICAL_DECISIONS}}
+
+### Performance Considerations
+- {{PERFORMANCE_NOTES}}
+
+## Testing Strategy
+
+### Unit Tests
+- {{UNIT_TESTS}}
+
+### Integration Tests
+- {{INTEGRATION_TESTS}}
+
+### Manual Testing Checklist
+- {{MANUAL_TESTING}}
+
+## Deployment
+
+### Build Process
+```bash
+pnpm build
+```
+
+### Environment Variables (Production)
+```env
+{{PRODUCTION_ENV_VARS}}
+```
+
+### Deployment Notes
+- {{DEPLOYMENT_NOTES}}
+
+## Maintenance
+
+### Dependencies to Monitor
+- {{DEPENDENCIES_TO_MONITOR}}
+
+### Regular Tasks
+- {{REGULAR_TASKS}}
+
+### Backup Strategy
+- {{BACKUP_STRATEGY}}
+
+## AI Agent Instructions
+
+### When working on this app:
+1. **TypeScript First:** Everything must be TypeScript - no JavaScript files
+2. **Always read this file first** to understand the current state
+3. **Use ONLY the approved tech stack:**
+   - **State:** Zustand stores only
+   - **Queries:** TanStack Query only
+   - **UI:** shadcn/ui components only
+   - **Tables:** TanStack Table only
+   - **Forms:** Zod + React Hook Form only
+   - **API:** tRPC only
+4. **Update this file** when adding new features or dependencies
+5. **Follow T3 stack patterns** - use tRPC for API, Prisma for database
+6. **Keep the app focused** - stick to the core purpose
+7. **Test changes locally** before deploying
+8. **Strict typing:** Use proper TypeScript types, avoid `any`
+
+### Common Tasks:
+- **Adding a new page:** Create in `src/pages/`, add to navigation
+- **Adding API endpoint:** Create in `src/server/api/routers/` (tRPC only)
+- **Adding database model:** Update `prisma/schema.prisma`, run migration
+- **Adding UI component:** Create in `src/components/` using shadcn/ui
+- **Adding state management:** Create Zustand store in `src/stores/`
+- **Adding data fetching:** Use TanStack Query hooks in `src/hooks/`
+- **Adding forms:** Use Zod schema + React Hook Form
+- **Adding tables:** Use TanStack Table components
+
+### Code Style:
+- **TypeScript Only:** Never create JavaScript files - everything must be TypeScript
+- **Approved Tech Stack Only:** Use only Zustand, TanStack Query, shadcn/ui, TanStack Table, Zod
+- Use strict TypeScript configuration with proper type annotations
+- Follow existing naming conventions
+- Keep components small and focused
+- Use Tailwind CSS for styling (no other CSS solutions)
+- Prefer composition over inheritance
+- Type all props, state, functions, and API responses
+- Avoid `any` types - use proper TypeScript types
+- Use TypeScript for all configuration files where possible
+- Follow shadcn/ui patterns for component structure
+- Use Zustand for all client-side state management
+- Use TanStack Query for all data fetching operations
