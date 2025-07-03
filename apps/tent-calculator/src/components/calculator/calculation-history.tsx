@@ -11,13 +11,13 @@ export function CalculationHistory() {
   if (calculations.length === 0) {
     return (
       <Card>
-        <CardContent className=\"pt-6\">
-          <div className=\"text-center text-muted-foreground\">
-            <History className=\"h-12 w-12 mx-auto mb-4 opacity-50\" />
-            <h3 className=\"text-lg font-medium mb-2\">No saved calculations</h3>
-            <p className=\"mb-4\">Your calculation history will appear here after you save some results.</p>
-            <Button variant=\"outline\" size=\"sm\">
-              <Calculator className=\"h-4 w-4 mr-2\" />
+        <CardContent className="pt-6">
+          <div className="text-center text-muted-foreground">
+            <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-medium mb-2">No saved calculations</h3>
+            <p className="mb-4">Your calculation history will appear here after you save some results.</p>
+            <Button variant="outline" size="sm">
+              <Calculator className="h-4 w-4 mr-2" />
               Create your first calculation
             </Button>
           </div>
@@ -27,7 +27,7 @@ export function CalculationHistory() {
   }
 
   return (
-    <div className=\"space-y-4\">
+    <div className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Calculation History</CardTitle>
@@ -37,7 +37,7 @@ export function CalculationHistory() {
         </CardHeader>
         <CardContent>
           {/* TODO: Implement calculation list */}
-          <p className=\"text-muted-foreground\">History functionality will be implemented with the database integration.</p>
+          <p className="text-muted-foreground">History functionality will be implemented with the database integration.</p>
         </CardContent>
       </Card>
     </div>

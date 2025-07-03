@@ -37,23 +37,23 @@ export function CalculationModeSelector() {
   const { setCalculationMode } = useCalculatorActions();
 
   return (
-    <div className=\"space-y-4\">
+    <div className="space-y-4">
       <RadioGroup
         value={calculationMode}
         onValueChange={(value) => setCalculationMode(value as CalculationMode)}
-        className=\"space-y-3\"
+        className="space-y-3"
       >
         {calculationModes.map((mode) => (
-          <div key={mode.value} className=\"flex items-start space-x-3 space-y-0\">
-            <RadioGroupItem value={mode.value} id={mode.value} className=\"mt-1\" />
-            <div className=\"grid gap-1.5 leading-none\">
+          <div key={mode.value} className="flex items-start space-x-3 space-y-0">
+            <RadioGroupItem value={mode.value} id={mode.value} className="mt-1" />
+            <div className="grid gap-1.5 leading-none">
               <Label
                 htmlFor={mode.value}
-                className=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {mode.label}
               </Label>
-              <p className=\"text-xs text-muted-foreground\">
+              <p className="text-xs text-muted-foreground">
                 {mode.description}
               </p>
             </div>

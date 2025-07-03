@@ -7,7 +7,9 @@ import type {
   TentDimensions,
   PaddingParameters,
   CalculationResult,
-  CalculationMode,
+  CalculationMode
+} from '~/types/tent';
+import {
   DEFAULT_TARP_DIMENSIONS,
   DEFAULT_TENT_DIMENSIONS,
   DEFAULT_PADDING

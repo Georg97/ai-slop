@@ -7,7 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string(),
+    DATABASE_URL: z.string().default("file:./db.sqlite"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -27,7 +27,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL: process.env.DATABASE_URL || "file:./db.sqlite",
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

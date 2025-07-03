@@ -41,18 +41,18 @@ export function PaddingControls() {
   };
 
   return (
-    <div className=\"space-y-6\">
+    <div className="space-y-6">
       {/* Preset Buttons */}
-      <div className=\"space-y-2\">
-        <Label className=\"text-sm font-medium\">Quick Presets</Label>
-        <div className=\"grid grid-cols-2 gap-2\">
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">Quick Presets</Label>
+        <div className="grid grid-cols-2 gap-2">
           {paddingPresets.map((preset) => (
             <Button
               key={preset.name}
-              variant=\"outline\"
-              size=\"sm\"
+              variant="outline"
+              size="sm"
               onClick={() => applyPreset(preset)}
-              className=\"text-xs\"
+              className="text-xs"
             >
               {preset.name}
             </Button>
@@ -61,25 +61,25 @@ export function PaddingControls() {
       </div>
 
       {/* Custom Padding Controls */}
-      <div className=\"space-y-5\">
+      <div className="space-y-5">
         {/* Vertical Padding */}
-        <div className=\"space-y-3\">
-          <div className=\"flex items-center justify-between\">
-            <Label htmlFor=\"verticalPadding\" className=\"text-sm font-medium\">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="verticalPadding" className="text-sm font-medium">
               Vertical Padding
             </Label>
-            <div className=\"flex items-center gap-2\">
+            <div className="flex items-center gap-2">
               <Input
-                id=\"verticalPadding\"
-                type=\"number\"
-                step=\"0.001\"
-                min=\"0\"
-                max=\"0.5\"
+                id="verticalPadding"
+                type="number"
+                step="0.001"
+                min="0"
+                max="0.5"
                 value={(paddingParameters.verticalPadding).toFixed(3)}
                 onChange={(e) => handleInputChange('verticalPadding', e.target.value)}
-                className=\"w-20 h-8 text-xs\"
+                className="w-20 h-8 text-xs"
               />
-              <span className=\"text-xs text-muted-foreground\">m</span>
+              <span className="text-xs text-muted-foreground">m</span>
             </div>
           </div>
           <Slider
@@ -88,31 +88,31 @@ export function PaddingControls() {
             max={0.2}
             min={0.01}
             step={0.005}
-            className=\"w-full\"
+            className="w-full"
           />
-          <p className=\"text-xs text-muted-foreground\">
+          <p className="text-xs text-muted-foreground">
             Clearance from tent peak to tarp ({formatValue(paddingParameters.verticalPadding)}cm)
           </p>
         </div>
 
         {/* Horizontal Padding */}
-        <div className=\"space-y-3\">
-          <div className=\"flex items-center justify-between\">
-            <Label htmlFor=\"horizontalPadding\" className=\"text-sm font-medium\">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="horizontalPadding" className="text-sm font-medium">
               Horizontal Padding
             </Label>
-            <div className=\"flex items-center gap-2\">
+            <div className="flex items-center gap-2">
               <Input
-                id=\"horizontalPadding\"
-                type=\"number\"
-                step=\"0.001\"
-                min=\"0\"
-                max=\"0.3\"
+                id="horizontalPadding"
+                type="number"
+                step="0.001"
+                min="0"
+                max="0.3"
                 value={(paddingParameters.horizontalPadding).toFixed(3)}
                 onChange={(e) => handleInputChange('horizontalPadding', e.target.value)}
-                className=\"w-20 h-8 text-xs\"
+                className="w-20 h-8 text-xs"
               />
-              <span className=\"text-xs text-muted-foreground\">m</span>
+              <span className="text-xs text-muted-foreground">m</span>
             </div>
           </div>
           <Slider
@@ -121,31 +121,31 @@ export function PaddingControls() {
             max={0.15}
             min={0.01}
             step={0.005}
-            className=\"w-full\"
+            className="w-full"
           />
-          <p className=\"text-xs text-muted-foreground\">
+          <p className="text-xs text-muted-foreground">
             Clearance from tent sides to tarp edges ({formatValue(paddingParameters.horizontalPadding)}cm each side)
           </p>
         </div>
 
         {/* End Padding */}
-        <div className=\"space-y-3\">
-          <div className=\"flex items-center justify-between\">
-            <Label htmlFor=\"endPadding\" className=\"text-sm font-medium\">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="endPadding" className="text-sm font-medium">
               End Padding
             </Label>
-            <div className=\"flex items-center gap-2\">
+            <div className="flex items-center gap-2">
               <Input
-                id=\"endPadding\"
-                type=\"number\"
-                step=\"0.001\"
-                min=\"0\"
-                max=\"0.3\"
+                id="endPadding"
+                type="number"
+                step="0.001"
+                min="0"
+                max="0.3"
                 value={(paddingParameters.endPadding).toFixed(3)}
                 onChange={(e) => handleInputChange('endPadding', e.target.value)}
-                className=\"w-20 h-8 text-xs\"
+                className="w-20 h-8 text-xs"
               />
-              <span className=\"text-xs text-muted-foreground\">m</span>
+              <span className="text-xs text-muted-foreground">m</span>
             </div>
           </div>
           <Slider
@@ -154,22 +154,22 @@ export function PaddingControls() {
             max={0.15}
             min={0.01}
             step={0.005}
-            className=\"w-full\"
+            className="w-full"
           />
-          <p className=\"text-xs text-muted-foreground\">
+          <p className="text-xs text-muted-foreground">
             Clearance from tent ends to tarp edges ({formatValue(paddingParameters.endPadding)}cm)
           </p>
         </div>
       </div>
 
       {/* Padding Summary */}
-      <div className=\"p-3 bg-muted rounded-lg text-xs\">
-        <h4 className=\"font-medium mb-2\">Padding Summary:</h4>
-        <div className=\"space-y-1 text-muted-foreground\">
+      <div className="p-3 bg-muted rounded-lg text-xs">
+        <h4 className="font-medium mb-2">Padding Summary:</h4>
+        <div className="space-y-1 text-muted-foreground">
           <p>Top clearance: {formatValue(paddingParameters.verticalPadding)}cm</p>
           <p>Side clearance: {formatValue(paddingParameters.horizontalPadding)}cm each</p>
           <p>End clearance: {formatValue(paddingParameters.endPadding)}cm</p>
-          <p className=\"font-medium text-foreground mt-2\">
+          <p className="font-medium text-foreground mt-2">
             Total width reduction: {formatValue(paddingParameters.horizontalPadding * 2)}cm
           </p>
         </div>
