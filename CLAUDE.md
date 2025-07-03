@@ -218,6 +218,48 @@ pnpm clean
 pnpm update -r
 ```
 
+## Common Build Issues and Solutions
+
+### TypeScript Import/Export Issues
+**Problem:** `'X' cannot be used as a value because it was imported using 'import type'`
+**Solution:** Separate type imports from value imports:
+```typescript
+// ❌ Wrong
+import type { DEFAULT_VALUE, MyType } from './types';
+
+// ✅ Correct
+import type { MyType } from './types';
+import { DEFAULT_VALUE } from './types';
+```
+
+### Vercel Deployment Environment Variables
+**Problem:** Build fails due to missing required environment variables
+**Solution:** Set defaults in environment schema:
+```typescript
+// In src/env.js
+server: {
+  DATABASE_URL: z.string().default("file:./db.sqlite"),
+}
+```
+
+### JSX Syntax Errors
+**Problem:** Escaped quotes in className attributes
+**Solution:** Use proper quote syntax:
+```tsx
+// ❌ Wrong
+<div className=\"bg-white\" />
+
+// ✅ Correct  
+<div className="bg-white" />
+```
+
+### Prisma Client Issues
+**Problem:** PrismaClient not found or outdated
+**Solution:** Regenerate client:
+```bash
+pnpm prisma generate
+```
+
 ## AI Agent Development Tips
 
 1. **TypeScript Only:** Never create JavaScript files - everything must be TypeScript
@@ -236,6 +278,14 @@ pnpm update -r
 8. **Strict typing:** Use proper TypeScript types, avoid `any`
 9. **Type safety:** Ensure all functions, variables, and components are properly typed
 10. **Follow patterns:** Use existing patterns for state, queries, and UI components
+
+### Critical Development Workflow:
+1. **ALWAYS run `pnpm build` after changes** to catch TypeScript errors
+2. **Fix import/export issues immediately** - don't ignore TypeScript errors
+3. **Test locally before committing** - ensure builds pass
+4. **Environment variables need defaults** for successful Vercel deployments
+5. **Generate Prisma client** after schema changes
+6. **Keep dependencies updated** regularly
 
 ## Next Steps
 

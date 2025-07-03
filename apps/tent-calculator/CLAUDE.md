@@ -186,16 +186,17 @@ pnpm prisma db seed
 # Start development server
 pnpm dev
 
-# Build for production
+# Build for production (ALWAYS run before deploying)
 pnpm build
+
+# Type checking only
+pnpm typecheck
 
 # Start production server
 pnpm start
 
-# Run tests
-pnpm test
-
 # Database operations
+pnpm prisma generate
 pnpm prisma studio
 pnpm prisma migrate dev
 ```
@@ -228,7 +229,8 @@ pnpm prisma migrate dev
 - ⏳ Padding profile system
 
 ### Known Issues
-- None currently
+- ✅ RESOLVED: TypeScript compilation errors with type vs value imports
+- ✅ RESOLVED: Vercel deployment failures due to missing DATABASE_URL
 
 ### Technical Decisions
 - Using SQLite for simplicity (single-user app)
@@ -293,6 +295,58 @@ NEXTAUTH_URL="https://your-domain.com"
 - Export calculation data as JSON
 - Version control for app configuration
 
+## Common Build Issues and Solutions
+
+### TypeScript Import Errors
+**Issue:** `'X' cannot be used as a value because it was imported using 'import type'`
+**Solution:** Separate type imports from value imports:
+```typescript
+// ❌ Wrong - imports constants as types
+import type { DEFAULT_VALUE, MyType } from './types';
+
+// ✅ Correct - separate imports
+import type { MyType } from './types';
+import { DEFAULT_VALUE } from './types';
+```
+
+### Vercel Deployment Environment Variables
+**Issue:** `Invalid environment variables: DATABASE_URL Required`
+**Solution:** Set default values in `src/env.js`:
+```typescript
+// ❌ Wrong - required without default
+DATABASE_URL: z.string(),
+
+// ✅ Correct - with default fallback
+DATABASE_URL: z.string().default("file:./db.sqlite"),
+
+// Also update runtime env
+runtimeEnv: {
+  DATABASE_URL: process.env.DATABASE_URL || "file:./db.sqlite",
+}
+```
+
+### Escaped Quote Syntax in Components
+**Issue:** `className=\"...\"` causing JSX parsing errors
+**Solution:** Use proper quote syntax:
+```tsx
+// ❌ Wrong - escaped quotes
+<div className=\"bg-white p-4\" />
+
+// ✅ Correct - normal quotes
+<div className="bg-white p-4" />
+```
+
+### Missing Prisma Client
+**Issue:** `PrismaClient is not available`
+**Solution:** Generate Prisma client:
+```bash
+pnpm prisma generate
+```
+
+### Authentication Dependencies (When Not Needed)
+**Issue:** NextAuth errors when authentication not required
+**Solution:** Remove unused auth dependencies and configuration files
+
 ## AI Agent Instructions
 
 ### When working on this app:
@@ -310,6 +364,8 @@ NEXTAUTH_URL="https://your-domain.com"
 6. **Keep the app focused** - stick to the core purpose
 7. **Test changes locally** before deploying
 8. **Strict typing:** Use proper TypeScript types, avoid `any`
+9. **ALWAYS check for build errors** after making changes with `pnpm build`
+10. **Fix import/export issues immediately** - separate type vs value imports correctly
 
 ### Common Tasks:
 - **Adding a new page:** Create in `src/pages/`, add to navigation
@@ -335,3 +391,11 @@ NEXTAUTH_URL="https://your-domain.com"
 - Follow shadcn/ui patterns for component structure
 - Use Zustand for all client-side state management
 - Use TanStack Query for all data fetching operations
+
+### Critical Development Workflow:
+1. **ALWAYS run `pnpm build` after making changes**
+2. **Fix TypeScript errors immediately** - don't ignore them
+3. **Separate type imports from value imports** correctly
+4. **Test locally before committing**
+5. **Environment variables must have defaults for Vercel deployment**
+6. **No JavaScript files** - convert everything to TypeScript
