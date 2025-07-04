@@ -11,7 +11,7 @@ interface ResultsDisplayProps {
 
 export function ResultsDisplay({ result }: ResultsDisplayProps) {
   const formatDimension = (meterValue: number) => {
-    return `${(meterValue * 100).toFixed(0)}cm`;
+    return `${Math.round(meterValue * 100)}cm`;
   };
 
   const formatMetersFallback = (meterValue: number) => {
@@ -150,7 +150,7 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
 
       {/* Fixed Constraints Reminder */}
       <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2">
-        <span className="font-medium">Fixed:</span> Length: 200cm, Foot Base: 75cm, Head Base: 107.5cm
+        <span className="font-medium">Fixed:</span> Length: 200cm, Foot Base: 75cm, Head Base: 108cm
       </div>
     </div>
   );

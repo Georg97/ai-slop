@@ -4,8 +4,8 @@
 
 **Purpose:** Calculate dimensions for a triangular prism mosquito net tent that fits under a tarp
 **Status:** Development (Development/Testing/Production)
-**Port:** 3000 (development)
-**Deployment:** TBD
+**Port:** 2403 (development), 3000 (production/Vercel)
+**Deployment:** Vercel
 
 ## Technical Stack
 

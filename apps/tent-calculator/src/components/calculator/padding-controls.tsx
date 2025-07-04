@@ -8,7 +8,7 @@ import { useCalculatorState, useCalculatorActions } from '~/stores/calculator-st
 const paddingPresets = [
   { name: 'Minimal', vertical: 3, horizontal: 2, end: 3 }, // cm values
   { name: 'Standard', vertical: 5, horizontal: 3, end: 5 },
-  { name: 'Conservative', vertical: 10, horizontal: 5, end: 7.5 }
+  { name: 'Conservative', vertical: 10, horizontal: 5, end: 8 } // rounded to whole number
 ];
 
 export function PaddingControls() {
@@ -31,7 +31,7 @@ export function PaddingControls() {
   };
 
   const formatValue = (meterValue: number) => {
-    return (meterValue * 100).toFixed(0); // Convert to cm
+    return Math.round(meterValue * 100).toString(); // Convert to cm (whole numbers)
   };
 
   // Convert meter values to cm for sliders
@@ -69,7 +69,7 @@ export function PaddingControls() {
             onValueChange={(values) => handleSliderChange('verticalPadding', values)}
             max={15}
             min={1}
-            step={0.5}
+            step={1}
             className="w-full"
           />
         </div>
@@ -84,7 +84,7 @@ export function PaddingControls() {
             onValueChange={(values) => handleSliderChange('horizontalPadding', values)}
             max={10}
             min={1}
-            step={0.5}
+            step={1}
             className="w-full"
           />
         </div>
@@ -99,7 +99,7 @@ export function PaddingControls() {
             onValueChange={(values) => handleSliderChange('endPadding', values)}
             max={10}
             min={1}
-            step={0.5}
+            step={1}
             className="w-full"
           />
         </div>

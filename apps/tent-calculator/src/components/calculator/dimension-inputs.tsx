@@ -9,7 +9,7 @@ export function DimensionInputs() {
   const { setTentDimensions } = useCalculatorActions();
 
   const handleInputChange = (field: keyof typeof tentDimensions, value: string) => {
-    const cmValue = value === '' ? undefined : parseFloat(value);
+    const cmValue = value === '' ? undefined : parseInt(value, 10);
     if (value === '' || (!isNaN(cmValue!) && cmValue! > 0)) {
       // Convert cm to meters for internal storage
       const meterValue = cmValue ? cmValue / 100 : undefined;
@@ -18,8 +18,8 @@ export function DimensionInputs() {
   };
 
   const formatValue = (meterValue: number | undefined) => {
-    // Convert meters to cm for display
-    return meterValue ? (meterValue * 100).toString() : '';
+    // Convert meters to cm for display (whole numbers only)
+    return meterValue ? Math.round(meterValue * 100).toString() : '';
   };
 
   // Get mode description
@@ -64,9 +64,9 @@ export function DimensionInputs() {
 
       {/* Fixed Dimensions Info - compact */}
       <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2">
-        <span className="font-medium">Fixed:</span> Length: {tentDimensions.length * 100}cm, 
-        Foot Base: {tentDimensions.footBaseWidth * 100}cm, 
-        Head Base: {tentDimensions.headBaseWidth * 100}cm
+        <span className="font-medium">Fixed:</span> Length: {Math.round(tentDimensions.length * 100)}cm, 
+        Foot Base: {Math.round(tentDimensions.footBaseWidth * 100)}cm, 
+        Head Base: {Math.round(tentDimensions.headBaseWidth * 100)}cm
       </div>
 
       {/* Dynamic Input Fields */}
