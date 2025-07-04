@@ -28,10 +28,6 @@ interface CalculatorState {
   isCalculating: boolean;
   error: string | null;
   
-  // UI State
-  activeTab: 'calculator' | 'results' | 'history';
-  showAdvanced: boolean;
-  
   // Actions
   setTarpDimensions: (dimensions: Partial<TarpDimensions>) => void;
   setTentDimensions: (dimensions: Partial<TentDimensions>) => void;
@@ -42,10 +38,6 @@ interface CalculatorState {
   calculateDimensions: () => void;
   clearResults: () => void;
   resetToDefaults: () => void;
-  
-  // UI actions
-  setActiveTab: (tab: 'calculator' | 'results' | 'history') => void;
-  setShowAdvanced: (show: boolean) => void;
   
   // Validation helpers
   canCalculate: () => boolean;
@@ -64,9 +56,6 @@ export const useCalculatorStore = create<CalculatorState>()(
       result: null,
       isCalculating: false,
       error: null,
-      
-      activeTab: 'calculator',
-      showAdvanced: false,
       
       // Configuration actions
       setTarpDimensions: (dimensions) =>
@@ -118,8 +107,7 @@ export const useCalculatorStore = create<CalculatorState>()(
           
           set({ 
             result,
-            isCalculating: false,
-            activeTab: 'results'
+            isCalculating: false
           });
         } catch (error) {
           set({ 
@@ -141,13 +129,6 @@ export const useCalculatorStore = create<CalculatorState>()(
           result: null,
           error: null
         }),
-      
-      // UI actions
-      setActiveTab: (tab) =>
-        set({ activeTab: tab }),
-      
-      setShowAdvanced: (show) =>
-        set({ showAdvanced: show }),
       
       // Validation helpers
       canCalculate: () => {

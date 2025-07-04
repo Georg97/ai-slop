@@ -1,6 +1,5 @@
-// Results display component
+// Results display component - simplified and compact
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
@@ -16,40 +15,58 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
   };
 
   const formatCentimeters = (value: number) => {
-    return `${(value * 100).toFixed(1)}cm`;
+    return `${(value * 100).toFixed(0)}cm`;
   };
 
   const getValidationIcon = () => {
     if (result.isValid) {
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
     } else {
-      return <XCircle className="h-5 w-5 text-red-500" />;
+      return <XCircle className="h-4 w-4 text-red-500" />;
     }
   };
 
-  const getValidationColor = () => {
-    return result.isValid ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50';
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Validation Status */}
-      <Card className={getValidationColor()}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {getValidationIcon()}
-            Calculation Results
-            <Badge variant={result.isValid ? 'default' : 'destructive'}>
-              {result.isValid ? 'Valid' : 'Invalid'}
-            </Badge>
-          </CardTitle>
-          <CardDescription>
-            {result.isValid 
-              ? 'These dimensions fit within your tarp constraints.' 
-              : 'These dimensions do not fit within your tarp constraints.'}
-          </CardDescription>
-        </CardHeader>
-      </Card>
+    <div className="space-y-4">
+      {/* Status and Key Results */}
+      <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
+        <div className="flex items-center gap-3">
+          {getValidationIcon()}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">
+                {result.isValid ? 'Valid Configuration' : 'Invalid Configuration'}
+              </span>
+              <Badge variant={result.isValid ? 'default' : 'destructive'} className="text-xs">
+                {result.isValid ? 'Fits' : 'Too Big'}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {result.isValid 
+                ? 'Tent fits within tarp constraints' 
+                : 'Tent exceeds available space'}
+            </p>
+          </div>
+        </div>
+        
+        {/* Key Dimensions */}
+        <div className="text-right">
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">Floor</p>
+              <p className="font-semibold">{formatDimension(result.floorWidth)}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Foot</p>
+              <p className="font-semibold">{formatDimension(result.footHeight)}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Head</p>
+              <p className="font-semibold">{formatDimension(result.headHeight)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Warnings */}
       {result.warnings.length > 0 && (
@@ -57,134 +74,57 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
           {result.warnings.map((warning, index) => (
             <Alert key={index} variant={result.isValid ? 'default' : 'destructive'}>
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>{warning}</AlertDescription>
+              <AlertDescription className="text-sm">{warning}</AlertDescription>
             </Alert>
           ))}
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Calculated Dimensions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tent Dimensions</CardTitle>
-            <CardDescription>Calculated tent measurements</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Foot Height</p>
-                <p className="text-2xl font-bold text-primary">{formatDimension(result.footHeight)}</p>
-                <p className="text-xs text-muted-foreground">{formatCentimeters(result.footHeight)}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Head Height</p>
-                <p className="text-2xl font-bold text-primary">{formatDimension(result.headHeight)}</p>
-                <p className="text-xs text-muted-foreground">{formatCentimeters(result.headHeight)}</p>
-              </div>
+      {/* Detailed Breakdown */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Tent Dimensions */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-sm">Calculated Dimensions</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Floor Width:</span>
+              <span className="font-medium">{formatDimension(result.floorWidth)} ({formatCentimeters(result.floorWidth)})</span>
             </div>
-            
-            <div className="pt-4 border-t">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Floor Width</p>
-                <p className="text-2xl font-bold text-primary">{formatDimension(result.floorWidth)}</p>
-                <p className="text-xs text-muted-foreground">{formatCentimeters(result.floorWidth)}</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Foot Height:</span>
+              <span className="font-medium">{formatDimension(result.footHeight)} ({formatCentimeters(result.footHeight)})</span>
             </div>
-
-            <div className="pt-4 border-t text-xs text-muted-foreground space-y-1">
-              <p>Length: 2.00m (fixed)</p>
-              <p>Foot base: 0.75m (fixed)</p>
-              <p>Head base: 1.075m (fixed)</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Available Space */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Available Space</CardTitle>
-            <CardDescription>Tarp space after padding</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Foot Space</p>
-                <p className="text-lg font-semibold">{formatDimension(result.availableSpace.footHeight)}</p>
-                <p className="text-xs text-muted-foreground">Height</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Head Space</p>
-                <p className="text-lg font-semibold">{formatDimension(result.availableSpace.headHeight)}</p>
-                <p className="text-xs text-muted-foreground">Height</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Foot Width</p>
-                <p className="text-lg font-semibold">{formatDimension(result.availableSpace.footWidth)}</p>
-                <p className="text-xs text-muted-foreground">After padding</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Head Width</p>
-                <p className="text-lg font-semibold">{formatDimension(result.availableSpace.headWidth)}</p>
-                <p className="text-xs text-muted-foreground">After padding</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Space Utilization */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Space Utilization</CardTitle>
-          <CardDescription>How efficiently your tent uses the available tarp space</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Height utilization (foot)</span>
-                <span>{((result.footHeight / result.availableSpace.footHeight) * 100).toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300" 
-                  style={{ width: `${(result.footHeight / result.availableSpace.footHeight) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Height utilization (head)</span>
-                <span>{((result.headHeight / result.availableSpace.headHeight) * 100).toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300" 
-                  style={{ width: `${(result.headHeight / result.availableSpace.headHeight) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Width utilization</span>
-                <span>{((result.floorWidth / Math.min(result.availableSpace.footWidth, result.availableSpace.headWidth)) * 100).toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300" 
-                  style={{ width: `${(result.floorWidth / Math.min(result.availableSpace.footWidth, result.availableSpace.headWidth)) * 100}%` }}
-                />
-              </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Head Height:</span>
+              <span className="font-medium">{formatDimension(result.headHeight)} ({formatCentimeters(result.headHeight)})</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Space Utilization */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-sm">Space Usage</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Height (Foot):</span>
+              <span className="font-medium">{((result.footHeight / result.availableSpace.footHeight) * 100).toFixed(0)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Height (Head):</span>
+              <span className="font-medium">{((result.headHeight / result.availableSpace.headHeight) * 100).toFixed(0)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Width:</span>
+              <span className="font-medium">{((result.floorWidth / Math.min(result.availableSpace.footWidth, result.availableSpace.headWidth)) * 100).toFixed(0)}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Constraints Reminder */}
+      <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2">
+        <span className="font-medium">Fixed:</span> Length: 2.00m, Foot Base: 0.75m, Head Base: 1.075m
+      </div>
     </div>
   );
 }
