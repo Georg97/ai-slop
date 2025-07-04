@@ -1,4 +1,4 @@
-// Mathematical calculation engine for tent geometry
+// Mathematical calculation engine for tent geometry - CORRECTED
 
 import type {
   TarpDimensions,
@@ -98,80 +98,105 @@ export class TentCalculator {
    * Calculate tent heights for a given floor width
    */
   private calculateHeightsForWidth(floorWidth: number): { footHeight: number; headHeight: number } {
-    const footCrossSection = this.getCrossSectionData(0); // Position 0 = foot
-    const headCrossSection = this.getCrossSectionData(1); // Position 1 = head
+    // Calculate required outer width (inner width + horizontal padding on both sides)
+    const requiredOuterWidth = floorWidth + (2 * this.paddingParameters.horizontalPadding);
+    
+    // Calculate heights using proper triangle geometry
+    const footHeight = this.calculateTriangleHeight(this.tentDimensions.footBaseWidth, requiredOuterWidth);
+    const headHeight = this.calculateTriangleHeight(this.tentDimensions.headBaseWidth, requiredOuterWidth);
+    
+    // Subtract vertical padding to get inner tent height
+    const innerFootHeight = footHeight - this.paddingParameters.verticalPadding;
+    const innerHeadHeight = headHeight - this.paddingParameters.verticalPadding;
+    
+    return { 
+      footHeight: Math.max(0, innerFootHeight), 
+      headHeight: Math.max(0, innerHeadHeight) 
+    };
+  }
 
-    // Calculate maximum height for given width using isosceles triangle formula
-    // For an isosceles triangle: height = sqrt((base/2)² + h²) where h is the height we want
-    // Rearranged: h = sqrt(height² - (base/2)²)
-    // But we need to account for the available tarp space and padding
+  /**
+   * Calculate triangle height given base width and required top width
+   * This is the core geometric calculation for the triangular tent cross-section
+   */
+  private calculateTriangleHeight(baseWidth: number, topWidth: number): number {
+    // For an isosceles triangle:
+    // The tent cross-section is an isosceles triangle with:
+    // - Base = baseWidth (tent base: 0.75m foot, 1.075m head)
+    // - Top width = topWidth (width at tent peak including padding)
+    // 
+    // Using similar triangles and the constraint that the tent fits within tarp space:
+    // height = (topWidth - baseWidth) / (2 * tan(tarp_angle))
+    // 
+    // For simplicity, we'll use the geometric relationship where:
+    // The tent height creates a triangle where the width narrows linearly from base to peak
+    // Maximum height occurs when topWidth approaches baseWidth
+    
+    if (topWidth <= baseWidth) {
+      // If required width is less than base, tent can be very tall
+      return 2.0; // Practical maximum height
+    }
+    
+    // Calculate the height needed to achieve the required top width
+    // Using the tarp slope geometry: for every unit of height, width increases by tarp slope
+    const tarpSlope = 0.8; // meters width per meter height (more realistic for tent setup)
+    const widthDifference = topWidth - baseWidth;
+    const requiredHeight = widthDifference / tarpSlope;
+    
+    // The available tarp height at this position
+    const maxTarpHeight = this.getTarpHeightAtPosition(0.5); // Use middle position as reference
+    
+    return Math.min(requiredHeight, maxTarpHeight);
+  }
 
-    const footHeight = this.calculateHeightForWidthAtPosition(floorWidth, footCrossSection);
-    const headHeight = this.calculateHeightForWidthAtPosition(floorWidth, headCrossSection);
-
-    return { footHeight, headHeight };
+  /**
+   * Get tarp height at a specific position (0 = foot, 1 = head)
+   */
+  private getTarpHeightAtPosition(position: number): number {
+    // Realistic tarp setup: A-frame or ridge-line setup
+    // Both ends are elevated, with peak in the middle or slightly offset
+    const footHeight = 0.8; // 80cm at foot (pole height)
+    const peakHeight = 1.4; // 140cm at peak
+    const headHeight = 1.0; // 100cm at head (pole height)
+    
+    // Quadratic interpolation for realistic tarp shape
+    const t = position;
+    return footHeight * (1 - t) * (1 - t) + peakHeight * 2 * t * (1 - t) + headHeight * t * t;
   }
 
   /**
    * Calculate floor width for given heights
    */
   private calculateWidthForHeights(footHeight: number, headHeight: number): number {
-    // Calculate the minimum width that can accommodate both heights
-    const footWidth = this.calculateWidthForHeightAtPosition(footHeight, this.getCrossSectionData(0));
-    const headWidth = this.calculateWidthForHeightAtPosition(headHeight, this.getCrossSectionData(1));
-
-    // Return the more constraining (smaller) width
-    return Math.min(footWidth, headWidth);
+    // Add vertical padding to get total required height
+    const totalFootHeight = footHeight + this.paddingParameters.verticalPadding;
+    const totalHeadHeight = headHeight + this.paddingParameters.verticalPadding;
+    
+    // Calculate maximum width that can be achieved with these heights
+    const footMaxWidth = this.calculateMaxWidthForHeight(this.tentDimensions.footBaseWidth, totalFootHeight);
+    const headMaxWidth = this.calculateMaxWidthForHeight(this.tentDimensions.headBaseWidth, totalHeadHeight);
+    
+    // Use the more constraining width
+    const maxOuterWidth = Math.min(footMaxWidth, headMaxWidth);
+    
+    // Subtract horizontal padding to get inner width
+    const maxInnerWidth = maxOuterWidth - (2 * this.paddingParameters.horizontalPadding);
+    
+    return Math.max(0, maxInnerWidth);
   }
 
   /**
-   * Calculate height at a specific position for given floor width
+   * Calculate maximum width achievable for a given height and base width
    */
-  private calculateHeightForWidthAtPosition(floorWidth: number, crossSection: CrossSectionData): number {
-    // Available height after padding
-    const availableHeight = crossSection.availableHeight;
+  private calculateMaxWidthForHeight(baseWidth: number, height: number): number {
+    // Using the inverse of the triangle height calculation
+    const tarpSlope = 0.8; // meters width per meter height (consistent with calculation)
+    const maxWidth = baseWidth + (height * tarpSlope);
     
-    // Check if width is achievable
-    if (floorWidth > crossSection.availableWidth) {
-      return 0; // Cannot achieve this width
-    }
-
-    // For isosceles triangle: height² = (hypotenuse)² - (base/2)²
-    // The hypotenuse is from tent peak to ground edge
-    // We need to find the height that creates the desired floor width
+    // Constrain by tarp dimensions
+    const maxTarpWidth = Math.max(this.tarpDimensions.shortSide, this.tarpDimensions.longSide);
     
-    // The tent creates a triangle where:
-    // - Base = floor width
-    // - Sides go from floor edges to tent peak
-    // The available width constrains how wide we can make the floor
-    
-    const halfFloorWidth = floorWidth / 2;
-    const halfBaseWidth = crossSection.baseWidth / 2;
-    
-    // The tent height creates similar triangles
-    // ratio = tentHeight / (availableHeight - padding)
-    // tentWidth / availableWidth = tentHeight / availableHeight
-    
-    // Using similar triangles and the constraint that the tent must fit within available space
-    const maxPossibleHeight = availableHeight * (halfFloorWidth / (crossSection.availableWidth / 2));
-    
-    return Math.min(maxPossibleHeight, availableHeight - this.paddingParameters.verticalPadding);
-  }
-
-  /**
-   * Calculate floor width for given height at specific position
-   */
-  private calculateWidthForHeightAtPosition(height: number, crossSection: CrossSectionData): number {
-    if (height > crossSection.availableHeight - this.paddingParameters.verticalPadding) {
-      return 0; // Height not achievable
-    }
-
-    // Using similar triangles: 
-    // tentWidth / availableWidth = tentHeight / availableHeight
-    const ratio = height / crossSection.availableHeight;
-    const tentWidth = crossSection.availableWidth * ratio;
-    
-    return Math.min(tentWidth, crossSection.availableWidth - 2 * this.paddingParameters.horizontalPadding);
+    return Math.min(maxWidth, maxTarpWidth);
   }
 
   /**
@@ -182,22 +207,21 @@ export class TentCalculator {
     const baseWidth = this.interpolateBaseWidth(position);
     
     // Calculate available space at this position
-    // The tarp forms a triangle, so height varies linearly
-    const tarpHeight = this.interpolateTarpHeight(position);
+    const tarpHeight = this.getTarpHeightAtPosition(position);
     const tarpWidth = this.interpolateTarpWidth(position);
     
     const availableHeight = tarpHeight - this.paddingParameters.verticalPadding;
     const availableWidth = tarpWidth - 2 * this.paddingParameters.horizontalPadding;
     
     // Maximum tent dimensions at this position
-    const maxTentHeight = availableHeight;
-    const maxTentWidth = availableWidth;
+    const maxTentHeight = Math.max(0, availableHeight);
+    const maxTentWidth = Math.max(0, availableWidth);
 
     return {
       position,
       baseWidth,
-      availableHeight,
-      availableWidth,
+      availableHeight: maxTentHeight,
+      availableWidth: maxTentWidth,
       maxTentHeight,
       maxTentWidth
     };
@@ -209,21 +233,6 @@ export class TentCalculator {
   private interpolateBaseWidth(position: number): number {
     return this.tentDimensions.footBaseWidth + 
            (this.tentDimensions.headBaseWidth - this.tentDimensions.footBaseWidth) * position;
-  }
-
-  /**
-   * Interpolate tarp height at position
-   */
-  private interpolateTarpHeight(position: number): number {
-    // For a triangular tarp, height varies based on the geometry
-    // This is a simplified model - you may need to adjust based on actual tarp shape
-    const footHeight = 0; // Tarp touches ground at foot
-    const peakHeight = 1.5; // Maximum tarp height (estimate)
-    const headHeight = 0; // Tarp touches ground at head
-    
-    // Quadratic interpolation for tent-like shape
-    const t = position;
-    return footHeight * (1 - t) * (1 - t) + peakHeight * 2 * t * (1 - t) + headHeight * t * t;
   }
 
   /**
@@ -262,17 +271,17 @@ export class TentCalculator {
     const headData = this.getCrossSectionData(1);
 
     if (footHeight > footData.maxTentHeight) {
-      warnings.push(`Foot height ${footHeight.toFixed(2)}m exceeds maximum ${footData.maxTentHeight.toFixed(2)}m`);
+      warnings.push(`Foot height ${(footHeight * 100).toFixed(0)}cm exceeds maximum ${(footData.maxTentHeight * 100).toFixed(0)}cm`);
       isValid = false;
     }
 
     if (headHeight > headData.maxTentHeight) {
-      warnings.push(`Head height ${headHeight.toFixed(2)}m exceeds maximum ${headData.maxTentHeight.toFixed(2)}m`);
+      warnings.push(`Head height ${(headHeight * 100).toFixed(0)}cm exceeds maximum ${(headData.maxTentHeight * 100).toFixed(0)}cm`);
       isValid = false;
     }
 
     if (floorWidth > Math.min(footData.maxTentWidth, headData.maxTentWidth)) {
-      warnings.push(`Floor width ${floorWidth.toFixed(2)}m exceeds maximum available space`);
+      warnings.push(`Floor width ${(floorWidth * 100).toFixed(0)}cm exceeds maximum available space`);
       isValid = false;
     }
 
@@ -287,6 +296,17 @@ export class TentCalculator {
 
     if (floorWidth < 0.4) {
       warnings.push('Floor width is very narrow, may not be practical');
+    }
+
+    // Check negative values
+    if (footHeight < 0) {
+      warnings.push('Foot height is negative - configuration impossible');
+      isValid = false;
+    }
+
+    if (headHeight < 0) {
+      warnings.push('Head height is negative - configuration impossible');
+      isValid = false;
     }
 
     // Check slope constraints
