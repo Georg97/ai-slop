@@ -1,4 +1,4 @@
-// Results display component - simplified and compact
+// Results display component - simplified and compact (using cm)
 
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
@@ -10,12 +10,12 @@ interface ResultsDisplayProps {
 }
 
 export function ResultsDisplay({ result }: ResultsDisplayProps) {
-  const formatDimension = (value: number) => {
-    return `${value.toFixed(2)}m`;
+  const formatDimension = (meterValue: number) => {
+    return `${(meterValue * 100).toFixed(0)}cm`;
   };
 
-  const formatCentimeters = (value: number) => {
-    return `${(value * 100).toFixed(0)}cm`;
+  const formatMetersFallback = (meterValue: number) => {
+    return `${meterValue.toFixed(2)}m`;
   };
 
   const getValidationIcon = () => {
@@ -88,15 +88,15 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Floor Width:</span>
-              <span className="font-medium">{formatDimension(result.floorWidth)} ({formatCentimeters(result.floorWidth)})</span>
+              <span className="font-medium">{formatDimension(result.floorWidth)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Foot Height:</span>
-              <span className="font-medium">{formatDimension(result.footHeight)} ({formatCentimeters(result.footHeight)})</span>
+              <span className="font-medium">{formatDimension(result.footHeight)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Head Height:</span>
-              <span className="font-medium">{formatDimension(result.headHeight)} ({formatCentimeters(result.headHeight)})</span>
+              <span className="font-medium">{formatDimension(result.headHeight)}</span>
             </div>
           </div>
         </div>
@@ -121,9 +121,36 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
         </div>
       </div>
 
+      {/* Available Space Details */}
+      <div className="space-y-3">
+        <h4 className="font-medium text-sm">Available Space After Padding</h4>
+        <div className="grid gap-4 md:grid-cols-2 text-sm">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Available Height (Foot):</span>
+              <span>{formatDimension(result.availableSpace.footHeight)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Available Height (Head):</span>
+              <span>{formatDimension(result.availableSpace.headHeight)}</span>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Available Width (Foot):</span>
+              <span>{formatDimension(result.availableSpace.footWidth)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Available Width (Head):</span>
+              <span>{formatDimension(result.availableSpace.headWidth)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Fixed Constraints Reminder */}
       <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2">
-        <span className="font-medium">Fixed:</span> Length: 2.00m, Foot Base: 0.75m, Head Base: 1.075m
+        <span className="font-medium">Fixed:</span> Length: 200cm, Foot Base: 75cm, Head Base: 107.5cm
       </div>
     </div>
   );

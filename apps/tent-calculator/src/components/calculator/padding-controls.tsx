@@ -1,4 +1,4 @@
-// Padding controls component - simplified and compact
+// Padding controls component - simplified and compact (using cm)
 
 import { Label } from '~/components/ui/label';
 import { Slider } from '~/components/ui/slider';
@@ -6,30 +6,36 @@ import { Button } from '~/components/ui/button';
 import { useCalculatorState, useCalculatorActions } from '~/stores/calculator-store';
 
 const paddingPresets = [
-  { name: 'Minimal', vertical: 0.03, horizontal: 0.02, end: 0.03 },
-  { name: 'Standard', vertical: 0.05, horizontal: 0.03, end: 0.05 },
-  { name: 'Conservative', vertical: 0.10, horizontal: 0.05, end: 0.075 }
+  { name: 'Minimal', vertical: 3, horizontal: 2, end: 3 }, // cm values
+  { name: 'Standard', vertical: 5, horizontal: 3, end: 5 },
+  { name: 'Conservative', vertical: 10, horizontal: 5, end: 7.5 }
 ];
 
 export function PaddingControls() {
   const { paddingParameters } = useCalculatorState();
   const { setPaddingParameters } = useCalculatorActions();
 
-  const handleSliderChange = (field: keyof typeof paddingParameters, values: number[]) => {
-    setPaddingParameters({ [field]: values[0] });
+  const handleSliderChange = (field: keyof typeof paddingParameters, cmValues: number[]) => {
+    // Convert cm to meters for internal storage
+    const meterValue = (cmValues[0] ?? 0) / 100;
+    setPaddingParameters({ [field]: meterValue });
   };
 
   const applyPreset = (preset: typeof paddingPresets[0]) => {
     setPaddingParameters({
-      verticalPadding: preset.vertical,
-      horizontalPadding: preset.horizontal,
-      endPadding: preset.end
+      // Convert cm to meters for storage
+      verticalPadding: preset.vertical / 100,
+      horizontalPadding: preset.horizontal / 100,
+      endPadding: preset.end / 100
     });
   };
 
-  const formatValue = (value: number) => {
-    return (value * 100).toFixed(0); // Convert to cm
+  const formatValue = (meterValue: number) => {
+    return (meterValue * 100).toFixed(0); // Convert to cm
   };
+
+  // Convert meter values to cm for sliders
+  const getCmValue = (meterValue: number) => meterValue * 100;
 
   return (
     <div className="space-y-4">
@@ -59,11 +65,11 @@ export function PaddingControls() {
             <Label className="text-sm">Vertical ({formatValue(paddingParameters.verticalPadding)}cm)</Label>
           </div>
           <Slider
-            value={[paddingParameters.verticalPadding]}
+            value={[getCmValue(paddingParameters.verticalPadding)]}
             onValueChange={(values) => handleSliderChange('verticalPadding', values)}
-            max={0.15}
-            min={0.01}
-            step={0.005}
+            max={15}
+            min={1}
+            step={0.5}
             className="w-full"
           />
         </div>
@@ -74,11 +80,11 @@ export function PaddingControls() {
             <Label className="text-sm">Horizontal ({formatValue(paddingParameters.horizontalPadding)}cm)</Label>
           </div>
           <Slider
-            value={[paddingParameters.horizontalPadding]}
+            value={[getCmValue(paddingParameters.horizontalPadding)]}
             onValueChange={(values) => handleSliderChange('horizontalPadding', values)}
-            max={0.10}
-            min={0.01}
-            step={0.005}
+            max={10}
+            min={1}
+            step={0.5}
             className="w-full"
           />
         </div>
@@ -89,11 +95,11 @@ export function PaddingControls() {
             <Label className="text-sm">End Clearance ({formatValue(paddingParameters.endPadding)}cm)</Label>
           </div>
           <Slider
-            value={[paddingParameters.endPadding]}
+            value={[getCmValue(paddingParameters.endPadding)]}
             onValueChange={(values) => handleSliderChange('endPadding', values)}
-            max={0.10}
-            min={0.01}
-            step={0.005}
+            max={10}
+            min={1}
+            step={0.5}
             className="w-full"
           />
         </div>

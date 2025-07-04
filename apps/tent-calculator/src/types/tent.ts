@@ -1,25 +1,26 @@
 // Types for tent calculation system
+// Note: All values stored internally in meters, but UI displays in centimeters
 
 export interface TarpDimensions {
-  shortSide: number; // 1.5m
-  longSide: number; // 2.15m
-  diagonalSide: number; // ~2.175m
-  usableLength: number; // 2.15m
+  shortSide: number; // 1.5m (internal)
+  longSide: number; // 2.15m (internal)
+  diagonalSide: number; // ~2.175m (internal)
+  usableLength: number; // 2.15m (internal)
 }
 
 export interface TentDimensions {
-  length: number; // 2m (target)
-  footBaseWidth: number; // 0.75m (fixed)
-  headBaseWidth: number; // 1.075m (fixed)
-  footHeight?: number;
-  headHeight?: number;
-  floorWidth?: number;
+  length: number; // 2m (internal, fixed)
+  footBaseWidth: number; // 0.75m (internal, fixed)
+  headBaseWidth: number; // 1.075m (internal, fixed)
+  footHeight?: number; // stored in meters, displayed as cm
+  headHeight?: number; // stored in meters, displayed as cm
+  floorWidth?: number; // stored in meters, displayed as cm
 }
 
 export interface PaddingParameters {
-  verticalPadding: number; // top clearance
-  horizontalPadding: number; // side clearance
-  endPadding: number; // foot/head clearance
+  verticalPadding: number; // stored in meters, displayed as cm
+  horizontalPadding: number; // stored in meters, displayed as cm
+  endPadding: number; // stored in meters, displayed as cm
 }
 
 export interface CalculationInputs {
@@ -87,7 +88,7 @@ export const DEFAULT_TENT_DIMENSIONS: TentDimensions = {
 };
 
 export const DEFAULT_PADDING: PaddingParameters = {
-  verticalPadding: 0.1, // 10cm
-  horizontalPadding: 0.05, // 5cm
-  endPadding: 0.075 // 7.5cm
+  verticalPadding: 0.05, // 5cm (displayed as 5cm in UI)
+  horizontalPadding: 0.03, // 3cm (displayed as 3cm in UI)
+  endPadding: 0.05 // 5cm (displayed as 5cm in UI)
 };

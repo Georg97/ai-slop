@@ -1,4 +1,4 @@
-// Dimension inputs component - dynamic based on calculation mode
+// Dimension inputs component - dynamic based on calculation mode (using cm)
 
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
@@ -9,14 +9,17 @@ export function DimensionInputs() {
   const { setTentDimensions } = useCalculatorActions();
 
   const handleInputChange = (field: keyof typeof tentDimensions, value: string) => {
-    const numValue = value === '' ? undefined : parseFloat(value);
-    if (value === '' || (!isNaN(numValue!) && numValue! > 0)) {
-      setTentDimensions({ [field]: numValue });
+    const cmValue = value === '' ? undefined : parseFloat(value);
+    if (value === '' || (!isNaN(cmValue!) && cmValue! > 0)) {
+      // Convert cm to meters for internal storage
+      const meterValue = cmValue ? cmValue / 100 : undefined;
+      setTentDimensions({ [field]: meterValue });
     }
   };
 
-  const formatValue = (value: number | undefined) => {
-    return value?.toString() ?? '';
+  const formatValue = (meterValue: number | undefined) => {
+    // Convert meters to cm for display
+    return meterValue ? (meterValue * 100).toString() : '';
   };
 
   // Get mode description
@@ -61,9 +64,9 @@ export function DimensionInputs() {
 
       {/* Fixed Dimensions Info - compact */}
       <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2">
-        <span className="font-medium">Fixed:</span> Length: {tentDimensions.length}m, 
-        Foot Base: {tentDimensions.footBaseWidth}m, 
-        Head Base: {tentDimensions.headBaseWidth}m
+        <span className="font-medium">Fixed:</span> Length: {tentDimensions.length * 100}cm, 
+        Foot Base: {tentDimensions.footBaseWidth * 100}cm, 
+        Head Base: {tentDimensions.headBaseWidth * 100}cm
       </div>
 
       {/* Dynamic Input Fields */}
@@ -71,15 +74,15 @@ export function DimensionInputs() {
         {visibleFields.includes('floorWidth') && (
           <div className="space-y-1">
             <Label htmlFor="floorWidth" className="text-sm font-medium">
-              Floor Width (m) *
+              Floor Width (cm) *
             </Label>
             <Input
               id="floorWidth"
               type="number"
-              step="0.01"
-              min="0.1"
-              max="2.0"
-              placeholder="e.g., 1.0"
+              step="1"
+              min="10"
+              max="200"
+              placeholder="e.g., 100"
               value={formatValue(tentDimensions.floorWidth)}
               onChange={(e) => handleInputChange('floorWidth', e.target.value)}
               className="border-primary"
@@ -93,15 +96,15 @@ export function DimensionInputs() {
         {visibleFields.includes('footHeight') && (
           <div className="space-y-1">
             <Label htmlFor="footHeight" className="text-sm font-medium">
-              Foot Height (m) *
+              Foot Height (cm) *
             </Label>
             <Input
               id="footHeight"
               type="number"
-              step="0.01"
-              min="0.1"
-              max="2.0"
-              placeholder="e.g., 0.7"
+              step="1"
+              min="10"
+              max="200"
+              placeholder="e.g., 70"
               value={formatValue(tentDimensions.footHeight)}
               onChange={(e) => handleInputChange('footHeight', e.target.value)}
               className="border-primary"
@@ -115,15 +118,15 @@ export function DimensionInputs() {
         {visibleFields.includes('headHeight') && (
           <div className="space-y-1">
             <Label htmlFor="headHeight" className="text-sm font-medium">
-              Head Height (m) *
+              Head Height (cm) *
             </Label>
             <Input
               id="headHeight"
               type="number"
-              step="0.01"
-              min="0.1"
-              max="2.0"
-              placeholder="e.g., 1.2"
+              step="1"
+              min="10"
+              max="200"
+              placeholder="e.g., 120"
               value={formatValue(tentDimensions.headHeight)}
               onChange={(e) => handleInputChange('headHeight', e.target.value)}
               className="border-primary"
