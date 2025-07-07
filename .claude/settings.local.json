@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(pnpm create:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dlx shadcn@latest add:*)",
+      "Bash(pnpm prisma migrate dev:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(git add:*)",
+      "Bash(pnpm build)",
+      "Bash(find:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(timeout:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(node:*)",
+      "Bash(pnpm test:*)",
+      "Bash(mv:*)"
+    ],
+    "deny": []
+  }
+}

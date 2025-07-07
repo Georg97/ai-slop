@@ -95,15 +95,23 @@ export class TentCalculator {
   }
 
   /**
-   * Calculate tent heights for a given floor width
+   * Calculate tent heights for a given floor width (rectangular floor)
    */
   private calculateHeightsForWidth(floorWidth: number): { footHeight: number; headHeight: number } {
-    // Calculate required outer width (inner width + horizontal padding on both sides)
-    const requiredOuterWidth = floorWidth + (2 * this.paddingParameters.horizontalPadding);
+    // For a RECTANGULAR floor, the tent width at floor level should be the same everywhere
+    // The target floor width is the SAME at both foot and head
+    const targetFloorWidth = floorWidth;
     
-    // Calculate heights using proper triangle geometry
-    const footHeight = this.calculateTriangleHeight(this.tentDimensions.footBaseWidth, requiredOuterWidth);
-    const headHeight = this.calculateTriangleHeight(this.tentDimensions.headBaseWidth, requiredOuterWidth);
+    // Calculate required outer width (inner width + horizontal padding on both sides)
+    const requiredOuterWidth = targetFloorWidth + (2 * this.paddingParameters.horizontalPadding);
+    
+    // For a triangular tent cross-section with rectangular floor:
+    // The tent slopes inward from the base to create the floor width
+    // Floor width = base width - 2 * (height * tent_slope_factor)
+    // Rearranging: height = (base_width - floor_width) / (2 * tent_slope_factor)
+    
+    const footHeight = this.calculateHeightForRectangularFloor(this.tentDimensions.footBaseWidth, requiredOuterWidth);
+    const headHeight = this.calculateHeightForRectangularFloor(this.tentDimensions.headBaseWidth, requiredOuterWidth);
     
     // Subtract vertical padding to get inner tent height
     const innerFootHeight = footHeight - this.paddingParameters.verticalPadding;
@@ -116,35 +124,36 @@ export class TentCalculator {
   }
 
   /**
-   * Calculate triangle height given base width and required top width
-   * This is the core geometric calculation for the triangular tent cross-section
+   * Calculate height needed for rectangular floor at given base width
+   * This assumes the tent slopes OUTWARD from base to create wider floor
    */
-  private calculateTriangleHeight(baseWidth: number, topWidth: number): number {
-    // For an isosceles triangle:
-    // The tent cross-section is an isosceles triangle with:
-    // - Base = baseWidth (tent base: 0.75m foot, 1.075m head)
-    // - Top width = topWidth (width at tent peak including padding)
+  private calculateHeightForRectangularFloor(baseWidth: number, targetFloorWidth: number): number {
+    // For a triangular tent with rectangular floor:
+    // The tent base (75cm foot, 108cm head) is the NARROWEST part at ground level
+    // The tent slopes OUTWARD as it goes up to create a wider floor at tent height
     // 
-    // Using similar triangles and the constraint that the tent fits within tarp space:
-    // height = (topWidth - baseWidth) / (2 * tan(tarp_angle))
-    // 
-    // For simplicity, we'll use the geometric relationship where:
-    // The tent height creates a triangle where the width narrows linearly from base to peak
-    // Maximum height occurs when topWidth approaches baseWidth
+    // Geometry: The tent cross-section is an inverted triangle
+    // - At ground level (base): narrow width (75cm foot, 108cm head)  
+    // - At floor level (tent height): wider floor width (110cm + padding)
+    // - The tent walls slope outward at an angle
     
-    if (topWidth <= baseWidth) {
-      // If required width is less than base, tent can be very tall
-      return 2.0; // Practical maximum height
+    if (targetFloorWidth <= baseWidth) {
+      // If target is narrower than base, no height needed (floor at ground level)
+      return 0.1; // Minimum practical height
     }
     
-    // Calculate the height needed to achieve the required top width
-    // Using the tarp slope geometry: for every unit of height, width increases by tarp slope
-    const tarpSlope = 0.8; // meters width per meter height (more realistic for tent setup)
-    const widthDifference = topWidth - baseWidth;
-    const requiredHeight = widthDifference / tarpSlope;
+    // Calculate how much the tent needs to expand outward
+    const widthExpansion = targetFloorWidth - baseWidth;
+    const halfWidthExpansion = widthExpansion / 2; // Each side expands outward by this amount
     
-    // The available tarp height at this position
-    const maxTarpHeight = this.getTarpHeightAtPosition(0.5); // Use middle position as reference
+    // Using tent wall slope: for typical tent geometry, the slope is about 45-60 degrees
+    // Using tan(60°) ≈ 1.73, meaning height = horizontal_distance / tan(angle)
+    // For outward sloping walls: height = horizontal_expansion / tan(wall_angle)
+    const tentWallSlope = 1.0; // horizontal expansion per unit height (45-degree walls)
+    const requiredHeight = halfWidthExpansion / tentWallSlope;
+    
+    // Constrain by maximum practical height
+    const maxTarpHeight = this.getTarpHeightAtPosition(0.5);
     
     return Math.min(requiredHeight, maxTarpHeight);
   }
